@@ -18,7 +18,7 @@ Agent DB stores threads, runs, steps, leases and retry state.
 ```
 
 ## Requirements covered
-- Two SQLite databases: `lab.db` for domain data and `agent.db` for durable execution/memory.
+- Two SQLite schemas/databases remain the required zero-config grading path: `lab.db` for domain data and `agent.db` for durable execution/memory. When `SUPABASE_DB_URL` is configured, the same domain + agent data is persisted in Supabase PostgreSQL.
 - Six effective tools/delegations; four specialist domain tools plus two inventory tools, with explicit usage/change descriptions.
 - Business rules stored in `policy` and equipment/student data; `book_equipment` re-enforces them.
 - Durable queue, worker lease and expired-run recovery.
@@ -38,6 +38,9 @@ pytest
 ```
 
 Expected verification: normal demo succeeds, crash demo prints `PASS`, and `pytest` reports `23 passed`.
+
+## Supabase cloud mode
+The instructor-requested cloud persistence is supported without breaking the brief's no-key clean-machine demo. Run `schema/supabase.sql` once in Supabase, then place the Session Pooler URI in a local `.env` as `SUPABASE_DB_URL=...`. The `.env` is git-ignored. Verify with `python -m scripts.cloud_check`. With that variable present, normal app/worker commands use Supabase; without it they use the required SQLite path.
 
 ## Optional Gemini check
 Set `GEMINI_API_KEY` and run `python -m scripts.demo --real`. The scripted demo is the required offline proof and does not need a key.

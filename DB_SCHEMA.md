@@ -1,18 +1,14 @@
 # Database Schema
 
-The assignment uses **two SQLite databases** as required.
+The project preserves the **two SQLite database structures required by the weekend brief** and also supports the instructor-requested **Supabase cloud persistence**.
 
-## 1. Domain database: `lab.db`
-- `student`: roll number, department, training completion.
-- `equipment`: name/category, training requirement, total/available units, optimistic version.
-- `policy`: data-driven rules (`max_active_bookings`).
-- `booking`: student + equipment + slot, unique to prevent duplicate booking.
-- `notification`: outbound confirmation records with a unique dedupe key.
-- `idempotency`: durable key + stored side-effect result.
+## Required SQLite structures
+1. `lab.db` / `schema/lab.sql`: `student`, `equipment`, `policy`, `booking`, `notification`, `idempotency`.
+2. `agent.db` / `schema/agent.sql`: `thread`, `message`, `run`, `run_step`, `tool_call` for durable queue, leases, memory and replay.
 
-Source schema: `schema/lab.sql`.
+The clean-machine scripted demo uses these SQLite schemas with no account or API key.
 
-## 2. Agent database: `agent.db`
-Created from `schema/agent.sql`. Stores durable conversation threads, queued/running runs, leases, attempts and recorded model/tool steps used for crash recovery.
+## Supabase cloud database
+`schema/supabase.sql` is the PostgreSQL/Supabase mirror of both structures. When a local `.env` contains `SUPABASE_DB_URL`, `app.config.open_stores()` selects `CloudLabDb` and `CloudRunStore`, so domain data, runs, leases, messages, tool calls and idempotency results are stored in Supabase.
 
-SQLite is intentionally used for runtime because the weekend brief explicitly requires two SQLite databases. No generated `.db` file is committed/submitted; both databases are created and seeded automatically.
+Secrets are never committed. `.env` is ignored and `.env.example` contains placeholders only.
