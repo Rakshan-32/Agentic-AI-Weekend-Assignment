@@ -1,0 +1,7 @@
+PRAGMA foreign_keys = ON;
+CREATE TABLE IF NOT EXISTS student (id INTEGER PRIMARY KEY, roll_no TEXT NOT NULL UNIQUE, name TEXT NOT NULL, dept TEXT NOT NULL, trained INTEGER NOT NULL DEFAULT 0 CHECK(trained IN(0,1)));
+CREATE TABLE IF NOT EXISTS equipment (id INTEGER PRIMARY KEY, name TEXT NOT NULL, category TEXT NOT NULL, requires_training INTEGER NOT NULL DEFAULT 0 CHECK(requires_training IN(0,1)), units_total INTEGER NOT NULL, units_available INTEGER NOT NULL CHECK(units_available>=0), version INTEGER NOT NULL DEFAULT 0);
+CREATE TABLE IF NOT EXISTS policy (name TEXT PRIMARY KEY, value INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS booking (id INTEGER PRIMARY KEY, student_id INTEGER NOT NULL REFERENCES student(id), equipment_id INTEGER NOT NULL REFERENCES equipment(id), slot TEXT NOT NULL, created_at REAL NOT NULL, UNIQUE(student_id,equipment_id,slot));
+CREATE TABLE IF NOT EXISTS notification (id INTEGER PRIMARY KEY, roll_no TEXT NOT NULL, message TEXT NOT NULL, dedupe_key TEXT NOT NULL UNIQUE, created_at REAL NOT NULL);
+CREATE TABLE IF NOT EXISTS idempotency (key TEXT PRIMARY KEY, tool_name TEXT NOT NULL, result TEXT NOT NULL, created_at REAL NOT NULL);
